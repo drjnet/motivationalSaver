@@ -222,10 +222,10 @@ public class MotivationalScreensaverView: ScreenSaverView {
     public override var hasConfigureSheet: Bool { true }
 
     public override var configureSheet: NSWindow? {
-        if configController == nil {
-            configController = ConfigurationSheetController(defaults: ssDefaults)
-        }
-        return configController?.window
+        // Always create a fresh controller — never return a stale cached window.
+        let controller = ConfigurationSheetController(defaults: ssDefaults)
+        configController = controller   // keep strong reference alive
+        return controller.window
     }
 
     private func clamp(_ value: CGFloat, lo: CGFloat, hi: CGFloat) -> CGFloat {

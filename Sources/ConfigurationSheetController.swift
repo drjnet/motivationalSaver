@@ -15,7 +15,7 @@ final class ConfigurationSheetController: NSObject {
     init(defaults: UserDefaults?) {
         self.defaults = defaults
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 340),
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 370),
             styleMask:   [.titled],
             backing:     .buffered,
             defer:       false
@@ -28,7 +28,7 @@ final class ConfigurationSheetController: NSObject {
 
     private func buildUI() {
         guard let cv = window.contentView else { return }
-        var y: CGFloat = 300
+        var y: CGFloat = 330
 
         addLabel("Settings", to: cv, frame: NSRect(x: 20, y: y, width: 360, height: 28),
                  fontSize: 17, bold: true)
@@ -138,10 +138,18 @@ final class ConfigurationSheetController: NSObject {
 
     @objc private func done(_ sender: NSButton) {
         saveSettings()
-        window.sheetParent?.endSheet(window, returnCode: .OK)
+        if let parent = window.sheetParent {
+            parent.endSheet(window, returnCode: .OK)
+        } else {
+            window.close()
+        }
     }
 
     @objc private func cancel(_ sender: NSButton) {
-        window.sheetParent?.endSheet(window, returnCode: .cancel)
+        if let parent = window.sheetParent {
+            parent.endSheet(window, returnCode: .cancel)
+        } else {
+            window.close()
+        }
     }
 }

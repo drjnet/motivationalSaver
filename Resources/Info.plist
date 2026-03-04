@@ -17,6 +17,8 @@
     <string>1.0</string>
     <key>NSPrincipalClass</key>
     <string>MotivationalScreensaverView</string>
+    <key>CFBundleIconFile</key>
+    <string>thumbnail</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
