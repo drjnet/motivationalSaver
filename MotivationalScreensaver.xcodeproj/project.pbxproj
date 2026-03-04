@@ -1,0 +1,145 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA00000000000000000050AA = {isa = PBXBuildFile; fileRef = AA00000000000000000010AA; };
+		AA00000000000000000051AA = {isa = PBXBuildFile; fileRef = AA00000000000000000011AA; };
+		AA00000000000000000052AA  = {isa = PBXBuildFile; fileRef = AA00000000000000000012AA;  };
+		AA00000000000000000053AA = {isa = PBXBuildFile; fileRef = AA00000000000000000013AA; };
+		AA00000000000000000054AA  = {isa = PBXBuildFile; fileRef = AA00000000000000000014AA;  };
+		AA00000000000000000055AA= {isa = PBXBuildFile; fileRef = AA00000000000000000030AA;};
+		AA00000000000000000056AA   = {isa = PBXBuildFile; fileRef = AA00000000000000000031AA;   };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA00000000000000000010AA  = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedGradientView.swift;          sourceTree = "<group>"; };
+		AA00000000000000000011AA  = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationSheetController.swift;  sourceTree = "<group>"; };
+		AA00000000000000000012AA   = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift;                        sourceTree = "<group>"; };
+		AA00000000000000000013AA  = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationalScreensaverView.swift;   sourceTree = "<group>"; };
+		AA00000000000000000014AA   = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteService.swift;                  sourceTree = "<group>"; };
+		AA00000000000000000020AA  = {isa = PBXFileReference; lastKnownFileType = text.plist.xml;   path = Info.plist;                          sourceTree = "<group>"; };
+		AA00000000000000000021AA   = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MotivationalScreensaver.entitlements; sourceTree = "<group>"; };
+		AA00000000000000000030AA = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenSaver.framework;  path = System/Library/Frameworks/ScreenSaver.framework;  sourceTree = SDKROOT; };
+		AA00000000000000000031AA    = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework;   path = System/Library/Frameworks/QuartzCore.framework;   sourceTree = SDKROOT; };
+		AA00000000000000000040AA  = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotivationalScreensaver.saver; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA00000000000000000061AA = {
+			isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647;
+			files = ( AA00000000000000000055AA, AA00000000000000000056AA, );
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA00000000000000000003AA = {
+			isa = PBXGroup;
+			children = ( AA00000000000000000004AA, AA00000000000000000005AA, AA00000000000000000006AA, AA00000000000000000007AA, );
+			sourceTree = "<group>";
+		};
+		AA00000000000000000004AA = {
+			isa = PBXGroup; name = Sources; path = Sources; sourceTree = "<group>";
+			children = ( AA00000000000000000013AA, AA00000000000000000010AA, AA00000000000000000011AA, AA00000000000000000014AA, AA00000000000000000012AA, );
+		};
+		AA00000000000000000005AA = {
+			isa = PBXGroup; name = Resources; path = Resources; sourceTree = "<group>";
+			children = ( AA00000000000000000020AA, AA00000000000000000021AA, );
+		};
+		AA00000000000000000006AA = {
+			isa = PBXGroup; name = Frameworks; sourceTree = "<group>";
+			children = ( AA00000000000000000030AA, AA00000000000000000031AA, );
+		};
+		AA00000000000000000007AA = {
+			isa = PBXGroup; name = Products; sourceTree = "<group>";
+			children = ( AA00000000000000000040AA, );
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA00000000000000000002AA = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA00000000000000000081AA;
+			buildPhases = ( AA00000000000000000060AA, AA00000000000000000061AA, AA00000000000000000062AA, );
+			buildRules = (); dependencies = ();
+			name = MotivationalScreensaver;
+			productName = MotivationalScreensaver;
+			productReference = AA00000000000000000040AA;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA00000000000000000001AA = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1500; LastUpgradeCheck = 1500;
+				TargetAttributes = { AA00000000000000000002AA = { CreatedOnToolsVersion = 15.0; }; };
+			};
+			buildConfigurationList = AA00000000000000000080AA;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = ( en, Base, );
+			mainGroup = AA00000000000000000003AA;
+			productRefGroup = AA00000000000000000007AA;
+			projectDirPath = ""; projectRoot = "";
+			targets = ( AA00000000000000000002AA, );
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA00000000000000000062AA = {
+			isa = PBXResourcesBuildPhase; buildActionMask = 2147483647;
+			files = (); runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA00000000000000000060AA = {
+			isa = PBXSourcesBuildPhase; buildActionMask = 2147483647;
+			files = ( AA00000000000000000050AA, AA00000000000000000051AA, AA00000000000000000052AA, AA00000000000000000053AA, AA00000000000000000054AA, );
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA00000000000000000070AA = { isa = XCBuildConfiguration; name = Debug;
+			buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; MACOSX_DEPLOYMENT_TARGET = 12.0;
+				ONLY_ACTIVE_ARCH = YES; SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; };
+		AA00000000000000000071AA = { isa = XCBuildConfiguration; name = Release;
+			buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; MACOSX_DEPLOYMENT_TARGET = 12.0;
+				SDKROOT = macosx; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; };
+		AA00000000000000000072AA = { isa = XCBuildConfiguration; name = Debug;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/MotivationalScreensaver.entitlements;
+				CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Resources/Info.plist; MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.motivational.screensaver"; PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; WRAPPER_EXTENSION = saver; }; };
+		AA00000000000000000073AA = { isa = XCBuildConfiguration; name = Release;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/MotivationalScreensaver.entitlements;
+				CODE_SIGN_STYLE = Automatic; DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Resources/Info.plist; MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.motivational.screensaver"; PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; WRAPPER_EXTENSION = saver; }; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA00000000000000000080AA = { isa = XCConfigurationList;
+			buildConfigurations = ( AA00000000000000000070AA, AA00000000000000000071AA, );
+			defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		AA00000000000000000081AA = { isa = XCConfigurationList;
+			buildConfigurations = ( AA00000000000000000072AA, AA00000000000000000073AA, );
+			defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA00000000000000000001AA;
+}
