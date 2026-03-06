@@ -11,14 +11,19 @@ struct Quote: Codable {
     let tags: [String]
 
     var categoryDisplayName: String {
-        guard let tag = tags.first else { return "INSPIRATION" }
-        switch tag.lowercased() {
+        // Use the first tag that maps to a known category — API quotes can have
+        // multiple tags (e.g. ["success", "love"]) so we must not blindly take tags.first
+        let known = ["success", "motivational", "inspirational",
+                     "health", "happiness", "leadership", "business", "money", "investing"]
+        let best = tags.first(where: { known.contains($0.lowercased()) }) ?? tags.first ?? ""
+        switch best.lowercased() {
         case "success":                       return "SUCCESS"
         case "motivational", "inspirational": return "MINDSET"
         case "health", "happiness":           return "WELLNESS"
         case "leadership", "business":        return "LEADERSHIP"
         case "money", "investing":            return "TRADING & INVESTING"
-        default:                              return tag.uppercased()
+        case "custom":                        return "MY QUOTES"
+        default:                              return best.uppercased()
         }
     }
 
@@ -134,6 +139,35 @@ struct Quote: Codable {
         Quote(content: "The market is a pendulum that forever swings between unsustainable optimism and unjustified pessimism.",
               author: "Benjamin Graham", tags: ["money"]),
     ]
+
+    // MARK: - Custom Quote Parsing
+
+    /// Parse a plain-text block (one quote per line, optional " — Author" suffix)
+    /// into Quote values tagged as "custom".
+    static func parseCustomQuotes(_ text: String) -> [Quote] {
+        text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .compactMap { line -> Quote? in
+                // Split on em-dash (—), en-dash (–), or " - " as author separator
+                let separators = [" \u{2014} ", " \u{2013} ", " - "]
+                for sep in separators {
+                    if let range = line.range(of: sep) {
+                        let content = String(line[..<range.lowerBound])
+                            .trimmingCharacters(in: .whitespaces)
+                        let author  = String(line[range.upperBound...])
+                            .trimmingCharacters(in: .whitespaces)
+                        if !content.isEmpty {
+                            return Quote(content: content,
+                                         author: author.isEmpty ? "Me" : author,
+                                         tags: ["custom"])
+                        }
+                    }
+                }
+                // No separator found — whole line is the quote
+                return Quote(content: line, author: "Me", tags: ["custom"])
+            }
+    }
 }
 
 // MARK: - Quote Category

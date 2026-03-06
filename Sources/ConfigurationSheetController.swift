@@ -6,16 +6,19 @@ import ScreenSaver
 
 final class ConfigurationSheetController: NSObject {
 
+    static let settingsChanged = Notification.Name("MotivationalScreensaverSettingsChanged")
+
     let window: NSWindow
     private let defaults: UserDefaults?
     private var categoryBoxes: [QuoteCategory: NSButton] = [:]
     private var intervalSlider: NSSlider!
     private var intervalValueLabel: NSTextField!
+    private var customQuotesView: NSTextView!
 
     init(defaults: UserDefaults?) {
         self.defaults = defaults
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 370),
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 540),
             styleMask:   [.titled],
             backing:     .buffered,
             defer:       false
@@ -28,12 +31,13 @@ final class ConfigurationSheetController: NSObject {
 
     private func buildUI() {
         guard let cv = window.contentView else { return }
-        var y: CGFloat = 330
+        var y: CGFloat = 500
 
         addLabel("Settings", to: cv, frame: NSRect(x: 20, y: y, width: 360, height: 28),
                  fontSize: 17, bold: true)
         y -= 42
 
+        // MARK: Quote Categories
         addLabel("Quote Categories", to: cv, frame: NSRect(x: 20, y: y, width: 360, height: 20),
                  fontSize: 12, bold: true, colour: .secondaryLabelColor)
         y -= 6
@@ -55,6 +59,7 @@ final class ConfigurationSheetController: NSObject {
 
         y -= 10
 
+        // MARK: Rotation Interval
         addLabel("Quote Rotation Interval", to: cv,
                  frame: NSRect(x: 20, y: y, width: 220, height: 20),
                  fontSize: 12, bold: true, colour: .secondaryLabelColor)
@@ -81,6 +86,45 @@ final class ConfigurationSheetController: NSObject {
         addLabel("60 s", to: cv, frame: NSRect(x: 356, y: y, width: 40, height: 16),
                  fontSize: 10, bold: false, colour: .tertiaryLabelColor).alignment = .right
 
+        y -= 18
+
+        // MARK: My Quotes
+        addLabel("My Quotes", to: cv, frame: NSRect(x: 20, y: y, width: 360, height: 20),
+                 fontSize: 12, bold: true, colour: .secondaryLabelColor)
+        y -= 6
+
+        let sep3 = NSBox(frame: NSRect(x: 20, y: y, width: 360, height: 1))
+        sep3.boxType = .separator
+        cv.addSubview(sep3)
+        y -= 10
+
+        // Scrollable text view — sits from y=78 up to current y
+        let tvHeight = y - 78
+        let scrollView = NSScrollView(frame: NSRect(x: 28, y: 78, width: 344, height: tvHeight))
+        scrollView.hasVerticalScroller   = true
+        scrollView.autohidesScrollers    = true
+        scrollView.borderType            = .bezelBorder
+
+        let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 344, height: tvHeight))
+        textView.minSize                             = NSSize(width: 0, height: tvHeight)
+        textView.maxSize                             = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable               = true
+        textView.isEditable                          = true
+        textView.isSelectable                        = true
+        textView.isRichText                          = false
+        textView.font                                = NSFont.systemFont(ofSize: 12)
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled  = false
+        textView.textContainerInset                  = NSSize(width: 4, height: 6)
+        scrollView.documentView = textView
+        customQuotesView = textView
+        cv.addSubview(scrollView)
+
+        addLabel("One per line. Optionally: Your quote here \u{2014} Author Name",
+                 to: cv, frame: NSRect(x: 28, y: 58, width: 344, height: 14),
+                 fontSize: 10, bold: false, colour: .tertiaryLabelColor)
+
+        // MARK: Buttons
         let doneBtn = NSButton(title: "Done", target: self, action: #selector(done(_:)))
         doneBtn.bezelStyle    = .rounded
         doneBtn.keyEquivalent = "\r"
@@ -115,6 +159,8 @@ final class ConfigurationSheetController: NSObject {
         let iv = defaults?.double(forKey: "quoteInterval") ?? 20.0
         intervalSlider.doubleValue = iv
         updateIntervalLabel(iv)
+
+        customQuotesView.string = defaults?.string(forKey: "customQuotes") ?? ""
     }
 
     private func saveSettings() {
@@ -122,6 +168,7 @@ final class ConfigurationSheetController: NSObject {
             defaults?.set(box.state == .on, forKey: "category_\(cat.rawValue)")
         }
         defaults?.set(intervalSlider.doubleValue, forKey: "quoteInterval")
+        defaults?.set(customQuotesView.string, forKey: "customQuotes")
         defaults?.synchronize()
     }
 
@@ -138,6 +185,7 @@ final class ConfigurationSheetController: NSObject {
 
     @objc private func done(_ sender: NSButton) {
         saveSettings()
+        NotificationCenter.default.post(name: ConfigurationSheetController.settingsChanged, object: nil)
         if let parent = window.sheetParent {
             parent.endSheet(window, returnCode: .OK)
         } else {

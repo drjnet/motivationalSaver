@@ -20,9 +20,9 @@ public class MotivationalScreensaverView: ScreenSaverView {
     private var rotationTimer:    Timer?
     private var configController: ConfigurationSheetController?
 
-    private var ssDefaults: UserDefaults? {
-        ScreenSaverDefaults(forModuleWithName: kBundleID)
-    }
+    // Stored once so the view and the ConfigurationSheetController always
+    // read/write the exact same UserDefaults instance — avoids stale-cache bugs.
+    private let ssDefaults: UserDefaults? = ScreenSaverDefaults(forModuleWithName: kBundleID)
 
     public override init?(frame: NSRect, isPreview: Bool) {
         super.init(frame: frame, isPreview: isPreview)
@@ -61,7 +61,21 @@ public class MotivationalScreensaverView: ScreenSaverView {
 
         [categoryLabel, dividerLine, quoteLabel, authorLabel].forEach { addSubview($0) }
 
-        quotes = Quote.fallbackQuotes.shuffled()
+        quotes = filteredFallbackQuotes()
+        fetchQuotes()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(settingsDidChange),
+            name: ConfigurationSheetController.settingsChanged,
+            object: nil
+        )
+    }
+
+    @objc private func settingsDidChange() {
+        quotes = filteredFallbackQuotes()
+        currentIndex = 0
+        showQuote(at: currentIndex, animated: true)
         fetchQuotes()
     }
 
@@ -139,6 +153,12 @@ public class MotivationalScreensaverView: ScreenSaverView {
         let interval = (ssDefaults?.double(forKey: "quoteInterval") ?? 0) > 0
             ? ssDefaults!.double(forKey: "quoteInterval") : 20.0
 
+        // Re-seed with filtered fallback quotes then fetch fresh ones from API.
+        // This ensures category changes from the settings panel take effect immediately.
+        quotes = filteredFallbackQuotes()
+        currentIndex = 0
+        fetchQuotes()
+
         showQuote(at: currentIndex, animated: false)
 
         rotationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
@@ -151,6 +171,10 @@ public class MotivationalScreensaverView: ScreenSaverView {
         rotationTimer = nil
         gradientView.stopAnimating()
         super.stopAnimation()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     public override func animateOneFrame() {}
@@ -204,10 +228,37 @@ public class MotivationalScreensaverView: ScreenSaverView {
     private func fetchQuotes() {
         let cats = selectedCategories()
         QuoteService.shared.fetchQuotes(for: cats) { [weak self] fetched in
-            guard let self = self, !fetched.isEmpty else { return }
-            self.quotes       = fetched.shuffled()
+            guard let self = self else { return }
+            if fetched.isEmpty {
+                // Offline — stay on the already-filtered fallback quotes
+                return
+            }
+            // Filter API results to only those matching selected categories,
+            // since quotable.io can return quotes with extra unrelated tags
+            let allowedTags = Set(cats.flatMap { $0.apiTags })
+            let filtered = fetched.filter { quote in
+                quote.tags.contains { allowedTags.contains($0.lowercased()) }
+            }
+            let custom = self.loadCustomQuotes()
+            self.quotes       = ((filtered.isEmpty ? fetched : filtered) + custom).shuffled()
             self.currentIndex = 0
+            self.showQuote(at: 0, animated: true)
         }
+    }
+
+    private func filteredFallbackQuotes() -> [Quote] {
+        let cats     = selectedCategories()
+        let allowed  = Set(cats.flatMap { $0.apiTags })
+        let filtered = Quote.fallbackQuotes.filter { quote in
+            quote.tags.contains { allowed.contains($0.lowercased()) }
+        }
+        let base = filtered.isEmpty ? Quote.fallbackQuotes.shuffled() : filtered.shuffled()
+        return (base + loadCustomQuotes()).shuffled()
+    }
+
+    private func loadCustomQuotes() -> [Quote] {
+        guard let raw = ssDefaults?.string(forKey: "customQuotes"), !raw.isEmpty else { return [] }
+        return Quote.parseCustomQuotes(raw)
     }
 
     private func selectedCategories() -> [QuoteCategory] {
